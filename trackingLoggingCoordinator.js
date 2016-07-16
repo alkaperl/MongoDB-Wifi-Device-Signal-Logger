@@ -31,7 +31,7 @@ async.series([
   	// Initiate the tracking
 		networkTracking.initiate(childLoggingProcess, function(){
 			// Follow up with the counter, updating db upload every time
-			networkTracking.counter(airodumpToDB.transfer(function(){}), function(){});
+			networkTracking.counter(airodumpToDB.transfer());
 		});
   }
 ],

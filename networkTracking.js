@@ -39,9 +39,8 @@ exports.initiate = function(childLoggingProcess, cb){
 /*
 Launches counter for every 10 seconds, aka when the file completes rewrite
 CB: Calls every time the file rewrites
-Delayed CB: Calls two seconds after initial counter trigger
 */
-exports.counter = function(cb, delayedCB){
+exports.counter = function(cb){
 	console.log("Counter initiation");
 	// Can change to triggering on file change instead of a set timer
   var timeout = setInterval(
