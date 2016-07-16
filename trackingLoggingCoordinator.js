@@ -15,6 +15,7 @@ var childLoggingProcess = require('child_process').spawn;
 process.on( 'SIGINT', function() {
   console.log( "\nGracefully shutting down from SIGINT (Ctrl-C)" );
   networkTracking.stop(childLoggingProcess, function(){
+    console.log("Finish ending the process");
   	process.exit();
   });
 })

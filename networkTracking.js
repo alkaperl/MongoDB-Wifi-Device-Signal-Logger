@@ -62,15 +62,14 @@ exports.stop = function(childLoggingProcess, cb){
 	    //Show in green
 	    console.log(gutil.colors.green('Log exists. Deleting now ...'));
 	    fs.unlink('./dump-01.csv');
+      // Process database info
+      processAirodumpDB(function(){
+        // Signal shutdown completion
+        cb();
+      });
 	  } else {
 	    //Show in red
 	    console.log(gutil.colors.red('Log not found, so not deleting.'));
 	  }
-	});
-
-	// Process database info
-	processAirodumpDB(function(){
-		// Signal shutdown completion
-		cb();
 	});
 }
