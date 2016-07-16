@@ -9,7 +9,7 @@ const setupNetwork = require('./setupNetwork');
 The child logging process is creating coordinator to tie
 initiation and termination calls
 */
-const childLoggingProcess = require('child_process').exec;
+var childLoggingProcess = require('child_process').spawn;
 
 // Prepare for control C (make sure to shut down airodump first)
 process.on( 'SIGINT', function() {

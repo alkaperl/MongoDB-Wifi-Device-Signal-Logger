@@ -15,21 +15,7 @@ returns the childLoggingProcess for termination in case of control C
 */
 exports.initiate = function(childLoggingProcess, cb){
 	console.log("Initiate network tracking");
-	childLoggingProcess('airodump-ng -w dump --output-format csv --write-interval 10 wlan0mon', 
-		function (error, stdout, stderr) {
-	  	// We are assuming no errors
-      console.log("child logging complete");
-		  /* This hould return the necessary logs:
-		 	console.log(`stdout: ${stdout}`); */
-		  console.log(`Network tracking stderr: ${stderr}`);
-		  if (error) {
-		    console.error(`Network tracking exec error: ${error}`);
-		    return;
-		  } else {
-		  	cb(childLoggingProcess);
-		  }
-		}
-  );
+	childLoggingProcess('airodump-ng', ['-w', 'dump', '--output-format', 'csv', '--write-interval', '10', 'wlan0mon']);
   // Initiate callback
   setTimeout(function(){
 		cb(childLoggingProcess);
