@@ -53,7 +53,7 @@ exports.counter = function(cb){
     }, 2000);
     clearInterval(timeout);
   } */
-  cb(), 10000);
+  cb, 10000);
 }
 
 /*
@@ -68,7 +68,7 @@ exports.stop = function(childLoggingProcess, cb){
 	console.log("Terminate network tracking");
 
 	// Kill logging child process
-	childLoggingProcess.kill();
+	childLoggingProcess.kill("SIGINT");
 
 	// Delete the temporary dump file
 	fs.exists('./dump-01.csv', function(exists) {
