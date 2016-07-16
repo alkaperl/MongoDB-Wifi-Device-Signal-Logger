@@ -44,7 +44,8 @@ Delayed CB: Calls two seconds after initial counter trigger
 exports.counter = function(cb, delayedCB){
 	console.log("Counter initiation");
 	// Can change to triggering on file change instead of a set timer
-  var timeout = setInterval(function() {
+  var timeout = setInterval(
+  /* function() {
   	console.log("Counter triggered");
   	cb();
     setTimeout(function(){ 
@@ -52,7 +53,8 @@ exports.counter = function(cb, delayedCB){
       delayedCB(); 
     }, 2000);
     clearInterval(timeout);
-  }, 10000);
+  } */
+  cb(), 10000);
 }
 
 /*
