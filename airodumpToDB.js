@@ -10,7 +10,7 @@ exports.transfer = function(cb){
 	console.log("Initiate CSV to DB");
 	const initialUploadToDB = require('child_process').exec;
 	initialUploadToDB('java -jar ProcessAirodumpOutput.jar -i dump-01.csv', 
-	function (error, stdout, stderr) => {
+	function (error, stdout, stderr) {
   	// We are assuming a single signal of 'complete'	
   	if (stdout=="complete"){
   		cb();
@@ -24,5 +24,6 @@ exports.transfer = function(cb){
 	  if (error) {
 	    console.error(`Airodump exec error: ${error}`);
 	    return;
-	  }
-});
+    }
+  });
+}

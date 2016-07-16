@@ -37,8 +37,8 @@ async.series([
 ],
 // End of script (should never happen)
 function(err, results) {
-	console.log("Bye");
-  networkTracking.stop(childLoggingProcess, function(){
-    process.exit();
-  });
+	// console.log("Bye");
+  // networkTracking.stop(childLoggingProcess, function(){
+    // process.exit();
+  // });
 });

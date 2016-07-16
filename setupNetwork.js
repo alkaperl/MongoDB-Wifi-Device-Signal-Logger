@@ -18,11 +18,11 @@ module.exports = function(cb){
 	  	console.log("Kill old child process");
 			const setupChildOne = require('child_process').exec;
 			setupChildOne('pkill NetworkManager', 
-				function (error, stdout, stderr) => {
+				function (error, stdout, stderr) {
 			  	// We are assuming no error message
 				  console.log(`Network manager kill stdout: ${stdout}`);
 				  console.log(`Network manager kill stderr: ${stderr}`);
-				  if (error) {
+				  if (stderr) {
 				    console.error(`Network manager exec error: ${error}`);
 				    return;
 				  } else {
@@ -35,11 +35,11 @@ module.exports = function(cb){
 	  	console.log("Start airmon wlan0 interface");
 			const setupChildTwo = require('child_process').exec;
 			setupChildTwo('airmon-ng start wlan0', 
-				function (error, stdout, stderr) => {
+				function (error, stdout, stderr) {
 			  	// We are assuming no error message
 				  console.log(`Airmon start stdout: ${stdout}`);
 				  console.log(`Airmon start stderr: ${stderr}`);
-				  if (error) {
+				  if (stderr) {
 				    console.error(`Airmon start error: ${error}`);
 				    return;
 				  } else {

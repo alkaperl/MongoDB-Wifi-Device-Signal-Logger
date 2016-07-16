@@ -1,7 +1,7 @@
 // Handles network tracking
 var fs = require('fs');
 var gutil = require('gulp-util');
-var processAirodumpDB = require('processAirodumpDB');
+var processAirodumpDB = require('./processAirodumpDB');
 
 /*
 Creates basic network log inside dump-01.csv in parent directory, 
@@ -16,7 +16,7 @@ returns the childLoggingProcess for termination in case of control C
 exports.initiate = function(childLoggingProcess, cb){
 	console.log("Initiate network tracking");
 	childLoggingProcess('airodump-ng -w dump --output-format csv --write-interval 10 wlan0mon', 
-		function (error, stdout, stderr) => {
+		function (error, stdout, stderr) {
 	  	// We are assuming no errors
 
 		  /* This hould return the necessary logs:
@@ -29,7 +29,11 @@ exports.initiate = function(childLoggingProcess, cb){
 		  	cb(childLoggingProcess);
 		  }
 		}
-	);
+  );
+  // Initiate callback
+  setTimeout(function(){
+		cb(childLoggingProcess);
+  }, 1000);
 }
 
 /*
