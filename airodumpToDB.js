@@ -9,7 +9,7 @@ parameters and nothing fancy
 exports.transfer = function(cb){
 	console.log("Initiate CSV to DB");
 	const initialUploadToDB = require('child_process').exec;
-	initialUploadToDB('java ProcessAirodumpOutput.jar -i dump-01.csv', 
+	initialUploadToDB('java -jar ProcessAirodumpOutput.jar -i dump-01.csv', 
 	function (error, stdout, stderr) {
   	// We are assuming no errors	
 	  if (error) {
