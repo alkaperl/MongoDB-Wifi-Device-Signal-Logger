@@ -68,7 +68,7 @@ exports.stop = function(childLoggingProcess, cb){
 	console.log("Terminate network tracking");
 
 	// Kill logging child process
-	childLoggingProcess.kill("SIGINT");
+//	childLoggingProcess.kill("SIGINT");
 
 	// Delete the temporary dump file
 	fs.exists('./dump-01.csv', function(exists) {
