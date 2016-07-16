@@ -3,4 +3,5 @@
 
 module.exports = function(){
 	// Do the mongoDB object model thingy whatever
+	console.log("Airodump processing");
 }

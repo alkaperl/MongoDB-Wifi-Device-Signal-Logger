@@ -1,8 +1,14 @@
+// Script for coordinating the event flow for the wifi tracker
+
+async = require('async');
 const airodumpToDB = require('./airodumpToDB');
 const networkTracking = require('./networkTracking');
 const setupNetwork = require('./setupNetwork');
-async = require('async');
 
+/* 
+The child logging process is creating coordinator to tie
+initiation and termination calls
+*/
 const childLoggingProcess = require('child_process').exec;
 
 // Prepare for control C (make sure to shut down airodump first)
@@ -24,7 +30,7 @@ async.series([
   function(callback) {
   	// Initiate the tracking
 		networkTracking.initiate(childLoggingProcess, function(){
-			// Follow up with the counter, updating it every time
+			// Follow up with the counter, updating db upload every time
 			networkTracking.counter(airodumpToDB.transfer(function(){}));
 		});
   }

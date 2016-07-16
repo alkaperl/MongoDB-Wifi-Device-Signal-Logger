@@ -1,16 +1,21 @@
 // Set up network config and setup
 
 /*
-bash:
+bash commands:
 pkill NetworkManager
 airmon-ng start wlan0
 */
 async = require("async");
 
+/*
+Set up network tracking to prepare for logging
+CB triggered on setup completion
+*/
 module.exports = function(cb){
 	async.series([
 	  function(callback) {
-	  	// Kill the earlier network manager
+	  	// Kill the network manager earlier
+	  	console.log("Kill old child process");
 			const setupChildOne = require('child_process').exec;
 			setupChildOne('pkill NetworkManager', 
 				function (error, stdout, stderr) => {
@@ -27,6 +32,7 @@ module.exports = function(cb){
 	  },
 	  function(callback) {
 	  	// Start airmon with wlan0 interface
+	  	console.log("Start airmon wlan0 interface");
 			const setupChildTwo = require('child_process').exec;
 			setupChildTwo('airmon-ng start wlan0', 
 				function (error, stdout, stderr) => {
@@ -42,10 +48,12 @@ module.exports = function(cb){
 			});
 	  }
 	],
-	// optional callback
+	// Signal completion
 	function(err, results) {
 		if (!err){
 	   	cb();
+		} else {
+			console.log(err);
 		}
 	});
 }

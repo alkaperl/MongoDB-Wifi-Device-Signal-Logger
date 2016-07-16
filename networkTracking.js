@@ -1,28 +1,29 @@
+// Handles network tracking
 var fs = require('fs');
 var gutil = require('gulp-util');
 var processAirodumpDB = require('processAirodumpDB');
 
-// Captures network traffic and logs to dynamically selected CSV
-
 /*
-Creates basic network log inside
-dump-01.csv in parent directory, 
-updating every 10 seconds
-Bash:
+Creates basic network log inside dump-01.csv in parent directory, 
+updating the file every 10 seconds
+Bash Command:
 airodump-ng -w dump --output-format csv --write-interval 10 wlan0mon 
-CB: returns the childLoggingProcess for termination in case of control C
+Child logging process:
+Child process is passed from the coordinator to allow for smooth termination
+CB: 
+returns the childLoggingProcess for termination in case of control C
 */
 exports.initiate = function(childLoggingProcess, cb){
-	
+	console.log("Initiate network tracking");
 	childLoggingProcess('airodump-ng -w dump --output-format csv --write-interval 10 wlan0mon', 
 		function (error, stdout, stderr) => {
 	  	// We are assuming no errors
-		  /* Should return the necessary logs
+
+		  /* This hould return the necessary logs:
 		 	console.log(`stdout: ${stdout}`); */
-		  console.log(`stderr: ${stderr}`);
+		  console.log(`Network tracking stderr: ${stderr}`);
 		  if (error) {
-		  	// Reduce
-		    console.error(`exec error: ${error}`);
+		    console.error(`Network tracking exec error: ${error}`);
 		    return;
 		  } else {
 		  	cb(childLoggingProcess);
@@ -31,19 +32,35 @@ exports.initiate = function(childLoggingProcess, cb){
 	);
 }
 
-// Launches counter for every 10 seconds, aka when the file completes rewrite
+/*
+Launches counter for every 10 seconds, aka when the file completes rewrite
+CB: Calls every time the file rewrites
+*/
 exports.counter = function(cb){
+	console.log("Counter initiation");
+	// Can change to triggering on file change instead of a set timer
   var timeout = setInterval(function() {
+  	console.log("Counter triggered");
   	cb();
     clearInterval(timeout);
   }, 10000);
 }
 
+/*
+Gracefully terminate the network tracking, killing the bash process, 
+deletes the dump file, and signals for database processing
+Child logging process:
+Terminate the child process
+CB:
+Signal the completed shutdown
+*/
 exports.stop = function(childLoggingProcess, cb){
-	// Kill logging
+	console.log("Terminate network tracking");
+
+	// Kill logging child process
 	childLoggingProcess.kill();
 
-	// Delete file
+	// Delete the temporary dump file
 	fs.exists('./dump-01.csv', function(exists) {
 	  if(exists) {
 	    //Show in green
@@ -55,7 +72,9 @@ exports.stop = function(childLoggingProcess, cb){
 	  }
 	});
 
-	processAirodumpDB();
-	// Finish shutdown
-	cb();
+	// Process database info
+	processAirodumpDB(function(){
+		// Signal shutdown completion
+		cb();
+	});
 }
