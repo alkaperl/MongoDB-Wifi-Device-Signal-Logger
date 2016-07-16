@@ -18,7 +18,7 @@ exports.initiate = function(childLoggingProcess, cb){
 	childLoggingProcess('airodump-ng -w dump --output-format csv --write-interval 10 wlan0mon', 
 		function (error, stdout, stderr) {
 	  	// We are assuming no errors
-
+      console.log("child logging complete");
 		  /* This hould return the necessary logs:
 		 	console.log(`stdout: ${stdout}`); */
 		  console.log(`Network tracking stderr: ${stderr}`);

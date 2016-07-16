@@ -1,0 +1,11 @@
+
+BSSID, First time seen, Last time seen, channel, Speed, Privacy, Cipher, Authentication, Power, # beacons, # IV, LAN IP, ID-length, ESSID, Key
+00:1D:D6:68:0E:B0, 2016-07-15 22:24:29, 2016-07-15 22:24:30,  1,  54, WPA2, CCMP TKIP,PSK, -32,        3,        0,   0.  0.  0.  0,   9, HOME-0EB2, 
+02:1D:D6:68:0E:B0, 2016-07-15 22:24:29, 2016-07-15 22:24:30,  1,  54, WPA2, CCMP,PSK, -32,        3,        0,   0.  0.  0.  0,   0, , 
+F8:18:97:F8:4A:C6, 2016-07-15 22:24:29, 2016-07-15 22:24:29,  1,  54, WPA2 WPA, CCMP TKIP,PSK, -77,        1,        1,   0.  0.  0.  0,   9, Leila_2.4, 
+EC:9A:74:98:8D:AA, 2016-07-15 22:24:30, 2016-07-15 22:24:30,  7,  54, WPA2, CCMP,PSK, -74,        3,        0,   0.  0.  0.  0,  30, HP-Print-AA-Officejet Pro 8600, 
+20:AA:4B:86:29:A8, 2016-07-15 22:24:30, 2016-07-15 22:24:30,  7,  54, WPA2 WPA, CCMP TKIP,PSK, -78,        1,        0,   0.  0.  0.  0,   7, garamoi, 
+4C:60:DE:CE:72:0C, 2016-07-15 22:24:32, 2016-07-15 22:24:32,  2,  54, WPA2, CCMP,PSK, -66,        1,        0,   0.  0.  0.  0,   8, yulaowan, 
+
+Station MAC, First time seen, Last time seen, Power, # packets, BSSID, Probed ESSIDs
+
