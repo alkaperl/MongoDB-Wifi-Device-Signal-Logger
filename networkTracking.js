@@ -45,7 +45,7 @@ Signal the completed shutdown
 */
 exports.stop = function(childLoggingProcess, cb){
 	console.log("Terminate network tracking");
-
+// fix later
 	// Kill logging child process
 //	childLoggingProcess.kill("SIGINT");
 

@@ -34,8 +34,10 @@ var timeSliceSchema = new Schema({
     timestamps: true
 });
 
+var collectionName = "airodumpRecord"
+
 // Generate model
-var timeSliceModel = mongoose.model('timeSliceModel', timeSliceSchema);
+var airodumpRecord = mongoose.model('timeSliceModel', timeSliceSchema, collectionName);
 
 // Export
-module.exports = timeSliceModel;
+module.exports = airodumpRecord;

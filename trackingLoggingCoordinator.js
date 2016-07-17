@@ -6,6 +6,7 @@ const networkTracking = require('./networkTracking');
 const setupNetwork = require('./setupNetwork');
 const processAirodumpDB = require('./processAirodumpDB');
 const mongoose = require('mongoose');
+var airodumpRecord = require('./airodumpRecord');
 
 /* 
 The child logging process is creating coordinator to tie
@@ -17,12 +18,22 @@ var processDBCounter = null;
 // Retrieve
 
 // Connect to the db
-mongoose.connect("mongodb://104.131.133.17:27017/wifiLogs");
-mongoose.connection.on('error', () => {
+var monConn = mongoose.createConnection("mongodb://104.131.133.17:27017/wifiLogs");
+monConn.on('error', () => {
   console.error('MongoDB Connection Error. Please make sure that MongoDB is running.');
   process.exit(1);
 });
-
+console.log("Begin manual record search");
+monConn.on('open', function(){
+  monConn.db.listCollections().toArray(function(err, names){
+    console.log(err, names);
+  });
+  monConn.db.collection("airodumpRecord", function(err, airoCollection){
+    airoCollection.find({}).toArray(function(err, airoRecords){
+      console.log(airoRecords);
+    });
+  });
+});
 
 // Prepare for control C (make sure to shut down airodump first)
 process.on('SIGINT', function() {
@@ -30,10 +41,11 @@ process.on('SIGINT', function() {
   clearInterval(networkCounter);
   clearInterval(processDBCounter);
   setTimeout(function(){
-    networkTracking.stop(childLoggingProcess, db, function(){
-
-      console.log("Finish ending the process");
-      process.exit();
+    networkTracking.stop(childLoggingProcess, function(){
+      processAirodumpDB.update(monConn, function(){
+        console.log("Finish ending the process");
+        process.exit();
+      });
     });
   }, 3000);
 });
@@ -52,7 +64,7 @@ async.series([
 			// Follow up with the counter, updating db upload every time
 			networkCounter = networkTracking.counter(airodumpToDB.transfer); 
       setTimeout(function(){
-          processDBCounter = processAirodumpDB.counter(db, processAirodumpDB.update);
+          processDBCounter = processAirodumpDB.counter(monConn, processAirodumpDB.update);
       }, 3000);
 		});
   }
