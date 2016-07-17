@@ -1,5 +1,15 @@
 
 BSSID, First time seen, Last time seen, channel, Speed, Privacy, Cipher, Authentication, Power, # beacons, # IV, LAN IP, ID-length, ESSID, Key
+00:12:17:D8:11:92, 2016-07-17 10:14:29, 2016-07-17 10:14:29,  6,  54, WPA, TKIP,PSK, -80,        1,        0,   0.  0.  0.  0,   4, leaf, 
+7E:8F:E0:09:BC:30, 2016-07-17 10:14:06, 2016-07-17 10:14:06,  6,  54, WPA2 WPA, CCMP TKIP,PSK, -74,        1,        0,   0.  0.  0.  0,   0, , 
+CE:D7:19:30:E5:ED, 2016-07-17 10:13:55, 2016-07-17 10:13:55,  3,  54, OPN, ,   , -24,        1,        0,   0.  0.  0.  0,   5, LinkZ, 
+C8:D7:19:30:E5:ED, 2016-07-17 10:13:51, 2016-07-17 10:13:51,  3,  54, WPA2 WPA, CCMP TKIP,PSK, -24,        1,        0,   0.  0.  0.  0,  10, LinkZ_2015, 
+20:E5:2A:78:21:BF, 2016-07-17 10:14:02, 2016-07-17 10:14:02, 11,  54, WPA2, CCMP,PSK, -78,        1,        0,   0.  0.  0.  0,  19, ngHub_319434NJ00312, 
+14:DD:A9:18:78:9A, 2016-07-17 10:14:01, 2016-07-17 10:14:01, 11,  54, OPN, ,   , -70,        1,        0,   0.  0.  0.  0,  11, xfinitywifi, 
+20:AA:4B:86:29:A8, 2016-07-17 10:14:11, 2016-07-17 10:14:11,  7,  54, WPA2 WPA, CCMP TKIP,PSK, -70,        1,        0,   0.  0.  0.  0,   7, garamoi, 
+14:DD:A9:18:78:98, 2016-07-17 10:14:28, 2016-07-17 10:14:28, 11,  54, WPA2 WPA, CCMP TKIP,PSK, -70,        1,        0,   0.  0.  0.  0,   7, kris2.4, 
+14:DD:A9:18:78:99, 2016-07-17 10:14:52, 2016-07-17 10:14:52, 11,  54, WPA2 WPA, CCMP TKIP,PSK, -72,        1,        0,   0.  0.  0.  0,   0, , 
+6C:70:9F:DE:FA:BC, 2016-07-17 10:14:50, 2016-07-17 10:14:50, 11,  54, WPA2, CCMP,PSK, -68,        1,        0,   0.  0.  0.  0,   5, Karma, 
 
 Station MAC, First time seen, Last time seen, Power, # packets, BSSID, Probed ESSIDs
 

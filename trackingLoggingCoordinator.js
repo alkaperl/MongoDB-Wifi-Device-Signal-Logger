@@ -18,22 +18,13 @@ var processDBCounter = null;
 // Retrieve
 
 // Connect to the db
-var monConn = mongoose.createConnection("mongodb://104.131.133.17:27017/wifiLogs");
+mongoose.connect("mongodb://104.131.133.17:27017/wifiLogs");
+var monConn = mongoose.connection;
 monConn.on('error', () => {
   console.error('MongoDB Connection Error. Please make sure that MongoDB is running.');
   process.exit(1);
 });
 console.log("Begin manual record search");
-monConn.on('open', function(){
-  monConn.db.listCollections().toArray(function(err, names){
-    console.log(err, names);
-  });
-  monConn.db.collection("airodumpRecord", function(err, airoCollection){
-    airoCollection.find({}).toArray(function(err, airoRecords){
-      console.log(airoRecords);
-    });
-  });
-});
 
 // Prepare for control C (make sure to shut down airodump first)
 process.on('SIGINT', function() {
@@ -42,10 +33,10 @@ process.on('SIGINT', function() {
   clearInterval(processDBCounter);
   setTimeout(function(){
     networkTracking.stop(childLoggingProcess, function(){
-      processAirodumpDB.update(monConn, function(){
+//      processAirodumpDB.update(monConn, function(){
         console.log("Finish ending the process");
         process.exit();
-      });
+//      });
     });
   }, 3000);
 });

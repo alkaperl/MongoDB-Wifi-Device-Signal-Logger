@@ -3,29 +3,34 @@
 var deviceModel = require('./deviceModel');
 var async = require('async');
 var airodumpRecord = require('./airodumpRecord');
+var util = require('util');
 
 exports.update = function(monConn, cb){
 	console.log("Airodump DB process starting");
   // Fetch for each airodump record
   console.log("Airodump DB record retrieved");
   monConn.db.collection('airodumpRecord', function(err, dumpRecordCollection){
-    dumpRecordCollection.find({}).forEach(function(dumpTimeSlice) {
+    var dumpRecordsCollected = dumpRecordCollection.find({});
+    dumpRecordsCollected.forEach(function(dumpTimeSlice, index) {
       async.waterfall([
-        function(dumpTimeSlice, callback) {
+        function(callback) {
           // Check for device conflicts
           console.log("Checking device conflict");
-          deviceModel.checkForDevice(dumpTimeSlice.MacAddress, function(locatedDevice){
+          deviceModel.checkForDevice(monConn, dumpTimeSlice.MacAddress, function(locatedDevice){
             callback(null, dumpTimeSlice, locatedDevice);
           });
         },
         function(dumpTimeSlice, locatedDevice, callback) {
-          if (locatedDevice){
-          console.log("Device located");
-          // If conflict
+          if (locatedDevice.macAddress){
+            // If conflict
             // Add time slice
-            locatedDevice.addTimeSlice(dumpTimeSlice._id, function(){
+            console.log(locatedDevice.macAddress);
+            console.log(locatedDevice.timeSlices);
+            deviceModel.addTimeSlice(locatedDevice, dumpTimeSlice._id, function(){
+                console.log("Updated timeslice:" +  locatedDevice.timeSlices);
               // Add probed essids
-              locatedDevice.addEssid(dumpTimeSlice.ProbedEssids, function(){
+              deviceModel.addEssid(locatedDevice, dumpTimeSlice.ProbedEssids, function(){
+                console.log("Updated id:" +  locatedDevice.affiliatedNetworks);
                 cb();
               });
             });
@@ -37,7 +42,7 @@ exports.update = function(monConn, cb){
             newTimeSlices.push(dumpTimeSlice);
             // Build new device
             var newDevice = new deviceModel({
-              MacAddress: dumpTimeSlice.MacAddress,
+              macAddress: dumpTimeSlice.macAddress,
               timeSlices: newTimeSlices,
               affiliatedNetworks: dumpTimeSlice.ProbedEssids
             }); 
@@ -45,9 +50,27 @@ exports.update = function(monConn, cb){
             newDevice.save((err) => {  
               console.log("New device saved");
               if (err){
-                console.log(err);
+                if (err.code == 11000){
+                  console.log("Duplicate device created");
+                  /*
+                  monConn.db.collection('deviceModels', function(err, deviceModels){
+                      deviceModels.find({ 
+                        macAddress: dumpTimeSlice.macAddress 
+                      }, function(err, locatedDevice){
+                          locatedDevice.addTimeSlice(dumpTimeSlice._id, function(){
+                            // Add probed essids
+                            locatedDevice.addEssid(dumpTimeSlice.ProbedEssids, function(){
+                            });
+                          });
+                      });
+                  });
+                  */
+                }
               } else {
-                cb();
+                if (index === dumpRecordsCollected.length -1){
+                  console.log("end");
+                  cb();
+                }
               }
             });
           }

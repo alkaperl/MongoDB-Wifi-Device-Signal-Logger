@@ -24,11 +24,11 @@ var deviceSchema = new Schema({
 
 // Add to affiliated networks list
 // No response, array of affiliated networks provided
-deviceSchema.methods.addEssid = function(essidArray, cb) {
+deviceSchema.statics.addEssid = function(deviceObject, essidArray, cb) {
     essidArray.forEach(function(value, index){
         // Add to object array if applicable
-        if (this.affiliatedNetworks.indexOf(value) == -1){
-            this.affiliatedNetworks.push(value);
+        if (deviceObject.affiliatedNetworks.indexOf(value) == -1){
+            deviceObject.affiliatedNetworks.push(value);
         }
         // Cb when complete
         if (index == (array.length - 1)){
@@ -39,17 +39,26 @@ deviceSchema.methods.addEssid = function(essidArray, cb) {
 
 // Add to time slices
 // No response, time slice object provided
-deviceSchema.methods.addTimeSlice = function(timeSliceID, cb) {
-    this.timeSlices.push(timeSliceID);
+deviceSchema.statics.addTimeSlice = function(deviceObject, timeSliceID, cb) {
+    deviceObject.timeSlices.push(timeSliceID);
     cb();
 };
 
 // Add to affiliated networks list
 // Returns model if match found, unknown value (likely false) if not; macAddress string provided
-deviceSchema.statics.checkForDevice = function(macAddress, cb) {
-    return this.model('deviceModel').find({ 
-        macAddress: this.macAddress 
-    }, cb);
+deviceSchema.statics.checkForDevice = function(monConn, macAddress, cb) {
+    monConn.db.collection('devicemodels', function(err, deviceModels){
+        if (err) {
+          console.log(err);
+        }
+        deviceModels.find({ 
+          "macAddress": macAddress 
+        }).toArray(function(err, value){
+          cb(value);
+          console.log("YESSSS:" + value);
+          console.log(err); 
+        });
+    });
 };
 
 // Generate model
