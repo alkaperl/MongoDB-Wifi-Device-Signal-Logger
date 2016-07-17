@@ -22,6 +22,7 @@ MongoClient.connect("mongodb://whimmly.com:27017/wifiLogs", function(err, connec
   if(err) { 
     console.log(err);
   }
+  console.log(connectedDB);
   db = connectedDB;
 });
 

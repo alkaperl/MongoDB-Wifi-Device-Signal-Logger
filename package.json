@@ -8,6 +8,7 @@
   "dependencies": {
     "fs": "0.0.2",
     "https": "^1.0.0",
+    "mongoose": "^4.5.4",
     "querystring": "^0.2.0",
     "underscore": "^1.8.3"
   }
