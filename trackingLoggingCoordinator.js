@@ -4,35 +4,46 @@ async = require('async');
 const airodumpToDB = require('./airodumpToDB');
 const networkTracking = require('./networkTracking');
 const setupNetwork = require('./setupNetwork');
+const processAirodumpDB = require('./processAirodumpDB');
 
 /* 
 The child logging process is creating coordinator to tie
 initiation and termination calls
 */
 var childLoggingProcess = require('child_process').spawn;
+var networkCounter = null;
+var processDBCounter = null;
 
 // Prepare for control C (make sure to shut down airodump first)
-process.on( 'SIGINT', function() {
+process.on('SIGINT', function() {
   console.log( "\nGracefully shutting down from SIGINT (Ctrl-C)" );
-  networkTracking.stop(childLoggingProcess, function(){
-    console.log("Finish ending the process");
-  	process.exit();
-  });
-})
+  clearInterval(networkCounter);
+  clearInterval(processDBCounter);
+  setTimeout(function(){
+    networkTracking.stop(childLoggingProcess, function(){
+
+      console.log("Finish ending the process");
+      process.exit();
+    });
+  }, 3000);
+});
 
 // Actual primary methods
 async.series([
   function(callback) {
   	// Set up the network and airmon interface
   	setupNetwork(function(){
-  		callback(null)
+  		callback(null);
   	});
   },
   function(callback) {
   	// Initiate the tracking
 		networkTracking.initiate(childLoggingProcess, function(){
 			// Follow up with the counter, updating db upload every time
-			networkTracking.counter(airodumpToDB.transfer);
+			networkCounter = networkTracking.counter(airodumpToDB.transfer); 
+      setTimeout(function(){
+          processDBCounter = processAirodumpDB.counter(processAirodumpDB.update);
+      }, 3000);
 		});
   }
 ],

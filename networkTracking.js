@@ -20,27 +20,20 @@ exports.initiate = function(childLoggingProcess, cb){
   setTimeout(function(){
 		cb(childLoggingProcess);
   }, 1000);
-}
+};
 
 /*
 Launches counter for every 10 seconds, aka when the file completes rewrite
-CB: Calls every time the file rewrites
+counter call: Calls every time the file rewrites
+Return timeout object
 */
-exports.counter = function(cb){
-	console.log("Counter initiation");
+exports.counter = function(counterCall){
+	console.log("Network counter initiation");
 	// Can change to triggering on file change instead of a set timer
   var timeout = setInterval(
-  /* function() {
-  	console.log("Counter triggered");
-  	cb();
-    setTimeout(function(){ 
-      console.log("Late counter triggered");
-      delayedCB(); 
-    }, 2000);
-    clearInterval(timeout);
-  } */
-  cb, 10000);
-}
+  counterCall, 10000);
+  return timeout;
+};
 
 /*
 Gracefully terminate the network tracking, killing the bash process, 
@@ -62,8 +55,8 @@ exports.stop = function(childLoggingProcess, cb){
 	    //Show in green
 	    console.log(gutil.colors.green('Log exists. Deleting now ...'));
 	    fs.unlink('./dump-01.csv');
-      // Process database info
-      processAirodumpDB(function(){
+      // Final database process 
+      processAirodumpDB.update(function(){
         // Signal shutdown completion
         cb();
       });
@@ -72,4 +65,4 @@ exports.stop = function(childLoggingProcess, cb){
 	    console.log(gutil.colors.red('Log not found, so not deleting.'));
 	  }
 	});
-}
+};
