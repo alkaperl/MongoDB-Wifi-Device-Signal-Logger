@@ -43,7 +43,7 @@ Terminate the child process
 CB:
 Signal the completed shutdown
 */
-exports.stop = function(childLoggingProcess, db, cb){
+exports.stop = function(childLoggingProcess, cb){
 	console.log("Terminate network tracking");
 
 	// Kill logging child process
@@ -56,7 +56,7 @@ exports.stop = function(childLoggingProcess, db, cb){
 	    console.log(gutil.colors.green('Log exists. Deleting now ...'));
 	    fs.unlink('./dump-01.csv');
       // Final database process 
-      processAirodumpDB.update(db, function(){
+      processAirodumpDB.update(function(){
         // Signal shutdown completion
         cb();
       });
