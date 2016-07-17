@@ -1,15 +1,16 @@
 // Convert the MongoDB collection of AirodumpRecords into a series of established Mac Addresss models
 // Log by entry -> Log by Mac Address
-require('./deviceModel');
-require('async');
+var deviceModel = require('./deviceModel');
+var async = require('async');
+var timeSliceModel = require('./timeSliceModel');
 
-exports.update = function(db, cb){
+exports.update = function(cb){
 	console.log("Airodump DB process starting");
 	async.waterfall([
     function(callback) {
     	// Fetch for each airodump record
     	console.log("Airodump DB record retrieved");
-			db.airodumpRecord.find().forEach(function(dumpTimeSlice) {
+			timeSliceModel.find().forEach(function(dumpTimeSlice) {
 				callback(null, dumpTimeSlice);
 			});
     },
@@ -54,16 +55,13 @@ exports.update = function(db, cb){
     		});
 			}
 
-			db.airodumpRecord.remove(dumpTimeSlice);
+			timeSliceModel.remove(dumpTimeSlice);
     }
 	]); 
 };
 
-exports.counter = function(db, cb){
+exports.counter = function(cb){
 	console.log("DB process counter launch");
-  var timeout = setInterval(
-  function(){
-    cb(db);  
-  }, 20000);
+  var timeout = setInterval(cb, 20000);
   return timeout;
 };

@@ -1,11 +1,11 @@
 // Script for coordinating the event flow for the wifi tracker
 
-async = require('async');
+var async = require('async');
 const airodumpToDB = require('./airodumpToDB');
 const networkTracking = require('./networkTracking');
 const setupNetwork = require('./setupNetwork');
 const processAirodumpDB = require('./processAirodumpDB');
-var MongoClient = require('mongodb').MongoClient;
+const mongoose = require('mongoose');
 
 /* 
 The child logging process is creating coordinator to tie
@@ -14,16 +14,13 @@ initiation and termination calls
 var childLoggingProcess = require('child_process').spawn;
 var networkCounter = null;
 var processDBCounter = null;
-var db;
 // Retrieve
 
 // Connect to the db
-MongoClient.connect("mongodb://whimmly.com:27017/wifiLogs", function(err, connectedDB) {
-  if(err) { 
-    console.log(err);
-  }
-  console.log(connectedDB);
-  db = connectedDB;
+mongoose.connect("mongodb://104.131.133.17:27017/wifiLogs");
+mongoose.connection.on('error', () => {
+  console.error('MongoDB Connection Error. Please make sure that MongoDB is running.');
+  process.exit(1);
 });
 
 
