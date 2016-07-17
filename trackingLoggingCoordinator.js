@@ -5,6 +5,7 @@ const airodumpToDB = require('./airodumpToDB');
 const networkTracking = require('./networkTracking');
 const setupNetwork = require('./setupNetwork');
 const processAirodumpDB = require('./processAirodumpDB');
+var MongoClient = require('mongodb').MongoClient;
 
 /* 
 The child logging process is creating coordinator to tie
@@ -13,6 +14,17 @@ initiation and termination calls
 var childLoggingProcess = require('child_process').spawn;
 var networkCounter = null;
 var processDBCounter = null;
+var db;
+// Retrieve
+
+// Connect to the db
+MongoClient.connect("mongodb://whimmly.com:27017/wifiLogs", function(err, connectedDB) {
+  if(err) { 
+    console.log(err);
+  }
+  db = connectedDB;
+});
+
 
 // Prepare for control C (make sure to shut down airodump first)
 process.on('SIGINT', function() {
@@ -20,7 +32,7 @@ process.on('SIGINT', function() {
   clearInterval(networkCounter);
   clearInterval(processDBCounter);
   setTimeout(function(){
-    networkTracking.stop(childLoggingProcess, function(){
+    networkTracking.stop(childLoggingProcess, db, function(){
 
       console.log("Finish ending the process");
       process.exit();
@@ -42,7 +54,7 @@ async.series([
 			// Follow up with the counter, updating db upload every time
 			networkCounter = networkTracking.counter(airodumpToDB.transfer); 
       setTimeout(function(){
-          processDBCounter = processAirodumpDB.counter(processAirodumpDB.update);
+          processDBCounter = processAirodumpDB.counter(db, processAirodumpDB.update);
       }, 3000);
 		});
   }

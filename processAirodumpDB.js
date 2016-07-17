@@ -3,7 +3,7 @@
 require('./deviceModel');
 require('async');
 
-exports.update = function(cb){
+exports.update = function(db, cb){
 	console.log("Airodump DB process starting");
 	async.waterfall([
     function(callback) {
@@ -59,9 +59,11 @@ exports.update = function(cb){
 	]); 
 };
 
-exports.counter = function(cb){
+exports.counter = function(db, cb){
 	console.log("DB process counter launch");
   var timeout = setInterval(
-  cb, 10000);
+  function(){
+    cb(db);  
+  }, 20000);
   return timeout;
 };
