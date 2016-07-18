@@ -1,106 +1,93 @@
 // Convert the MongoDB collection of AirodumpRecords into a series of established Mac Addresss models
 // Log by entry -> Log by Mac Address
-var deviceModel = require('./deviceModel');
 var async = require('async');
-var airodumpRecord = require('./airodumpRecord');
 var util = require('util');
 
+// Load db object models
+var deviceModel = require('./deviceModel');
+var airodumpRecord = require('./airodumpRecord');
+
 exports.update = function(monConn, cb){
-	console.log("Airodump DB process starting");
-  // Fetch for each airodump record
-  console.log("Airodump DB record retrieved");
+	console.log("Airodump DB processing starting");
+  // Load the device models collection
   var deviceModels;
   monConn.db.collection('devicemodels', function(err, deviceModelsRaw){
     deviceModels = deviceModelsRaw;
   });
+
+  // Load the airodumpRecord models collection
+  var dumpRecordCollection;
   monConn.db.collection('airodumpRecord', function(err, dumpRecordCollection){
     var dumpRecordsCollected = dumpRecordCollection.find({});
-    dumpRecordsCollected.forEach(function(dumpTimeSlice, index) {
-      async.waterfall([
-        function(callback) {
-          // Check for device conflicts
-          console.log("Checking device conflict");
-          deviceModel.checkForDevice(monConn, dumpTimeSlice.macAddress, function(locatedDevice){
-            console.log("Confawe: ");
-            console.log(locatedDevice);
-            callback(null, dumpTimeSlice, locatedDevice[0]);
-          });
-        },
-        function(dumpTimeSlice, locatedDevice, callback) {
-          if (locatedDevice.macAddress){
-            // If conflict
-            // Add time slice
-            console.log(locatedDevice.macAddress);
-            console.log(locatedDevice.timeSlices);
-            deviceModel.addTimeSlice(locatedDevice, dumpTimeSlice._id, function(locatedDevice){
-              console.log("Updated timeslice:" +  locatedDevice.timeSlices);
-              console.log("Err:" + err);
-              console.log("Yea" + deviceModels);
+  });
+
+  // Begin processing database
+  // DB processing waterfall function for each airodumpRecord
+  dumpRecordsCollected.forEach(function(dumpTimeSlice, index) {
+    async.waterfall([
+      function(callback) {
+        // Check for device conflicts
+        console.log("Checking device conflict");
+        deviceModel.checkForDevice(monConn, dumpTimeSlice.macAddress, function(locatedDevice){
+          callback(null, dumpTimeSlice, locatedDevice[0]);
+        });
+      },
+      function(dumpTimeSlice, locatedDevice, callback) {
+        // Create or update device
+        if (locatedDevice){
+          // If there is an exiting device, add airodumpRecord to it
+          deviceModel.addTimeSlice(locatedDevice, dumpTimeSlice._id, function(locatedDevice){
+            // Add probed essids
+            deviceModel.addEssid(locatedDevice, dumpTimeSlice.probedEssids, function(locatedDevice){
+              // Save updated model
               deviceModels.update({
                 "macAddress": dumpTimeSlice.macAddress
               }, locatedDevice, true);
-              // Add probed essids
-              deviceModel.addEssid(locatedDevice, dumpTimeSlice.probedEssids, function(locatedDevice){
-                console.log("Updated id:" +  locatedDevice.affiliatedNetworks);
-                locatedDevice.save((err) => {
-                  if (err) {
-                    console.log(err);
-                  } 
-                });  
-                cb();
-              });
+              cb();
             });
-          } else {
-            console.log("No device located");
-          // If no conflict
-            // Generate new time slices
-            var newTimeSlices = [];
-            newTimeSlices.push(dumpTimeSlice);
-            // Build new device
-            var newDevice = new deviceModel({
-              macAddress: dumpTimeSlice.macAddress,
-              timeSlices: newTimeSlices,
-              affiliatedNetworks: dumpTimeSlice.ProbedEssids
-            }); 
-            // Save device
-            newDevice.save((err) => {  
-              console.log("New device saved");
-              if (err){
-                if (err.code == 11000){
-                  console.log("Duplicate device created");
-                  /*
-                  monConn.db.collection('deviceModels', function(err, deviceModels){
-                      deviceModels.find({ 
-                        macAddress: dumpTimeSlice.macAddress 
-                      }, function(err, locatedDevice){
-                          locatedDevice.addTimeSlice(dumpTimeSlice._id, function(){
-                            // Add probed essids
-                            locatedDevice.addEssid(dumpTimeSlice.ProbedEssids, function(){
-                            });
-                          });
-                      });
-                  });
-                  */
-                }
-              } else {
-                if (index === dumpRecordsCollected.length -1){
-                  console.log("end");
-                  cb();
-                }
+          });
+        } else {
+          console.log("No device located");
+          // Generate new device if it doesn't exist
+          // Generate new time slice array
+          var newTimeSlices = [];
+          newTimeSlices.push(dumpTimeSlice);
+          // Meanwhile, no need to do same for affiliatedNetworks, 
+          // probedEssids is already array
+          // Build new device
+          var newDevice = new deviceModel({
+            macAddress: dumpTimeSlice.macAddress,
+            timeSlices: newTimeSlices,
+            affiliatedNetworks: dumpTimeSlice.ProbedEssids
+          }); 
+          // Save new device
+          newDevice.save((err) => {  
+            if (err){
+              if (err.code == 11000){
+                console.log("Duplicate device created");
               }
-            });
-          }
-          airodumpRecord.remove(dumpTimeSlice);
+            } else {
+              console.log("New device saved");
+              // Assuming new device correctly saves
+              if (index === dumpRecordsCollected.length -1){
+                console.log("DB processing complete");
+                cb();
+              }
+            }
+          });
         }
-      ]); 
-    });
-  }); 
+        // Delete the airodumpRecord file
+        airodumpRecord.remove(dumpTimeSlice);
+      }
+    ]); 
+  });
 };
 
+// Counter for periodic db updates
 exports.counter = function(monConn, cb){
 	console.log("DB process counter launch");
   var timeout = setInterval(function(){
-    cb(monConn); 
+    cb(monConn, function(){}); 
   }, 20000);
   return timeout;
 };

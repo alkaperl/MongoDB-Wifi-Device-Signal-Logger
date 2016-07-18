@@ -11,10 +11,10 @@ var deviceSchema = new Schema({
         unique: true
     },
     // Array of time slice IDs
-	timeSlices:[{
-		type: mongoose.Schema.Types.ObjectId,
-		ref: 'timeSliceModel'
-	}],
+    timeSlices:[{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'timeSliceModel'
+    }],
     // List of networks previously attempted to be
     // connected to, via list of probed essids
     affiliatedNetworks: [String]
@@ -31,7 +31,7 @@ deviceSchema.statics.addEssid = function(deviceObject, essidArray, cb) {
             deviceObject.affiliatedNetworks.push(value);
         }
         // Cb when complete
-        if (index == (array.length - 1)){
+        if (index == (essidArray.length - 1)){
             cb(deviceObject);
         }        
     });
@@ -55,9 +55,6 @@ deviceSchema.statics.checkForDevice = function(monConn, macAddress, cb) {
           "macAddress": macAddress 
         }).toArray(function(err, value){
           cb(value);
-          console.log("YESSSS:" + value);
-          console.log(macAddress);
-          console.log(err); 
         });
     });
 };

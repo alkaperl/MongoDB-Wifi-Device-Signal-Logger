@@ -6,15 +6,15 @@ var deviceModel = require('./deviceModel');
 
 // Schema for timeSliceSchema
 var timeSliceSchema = new Schema({
-    // _id used to affiliate with device model
+    // Time slice _id used to affiliate with device model
     // MacAddress relate to device model
     MacAddress: {
         type: String,
         ref: 'deviceModel'
     },
-	FirstSeen:{
-        type: String
-	},
+    FirstSeen:{
+          type: String
+    },
     LastSeen: {
         type: String
     },

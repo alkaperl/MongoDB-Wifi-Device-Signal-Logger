@@ -16,7 +16,7 @@ returns the childLoggingProcess for termination in case of control C
 exports.initiate = function(childLoggingProcess, cb){
 	console.log("Initiate network tracking");
 	childLoggingProcess('airodump-ng', ['-w', 'dump', '--output-format', 'csv', '--write-interval', '10', 'wlan0mon']);
-  // Initiate callback
+  // Initiate delayed callback
   setTimeout(function(){
 		cb(childLoggingProcess);
   }, 1000);
@@ -43,26 +43,28 @@ Terminate the child process
 CB:
 Signal the completed shutdown
 */
-exports.stop = function(childLoggingProcess, cb){
+exports.stop = function(childLoggingProcess, monConn, cb){
 	console.log("Terminate network tracking");
 // fix later
 	// Kill logging child process
 //	childLoggingProcess.kill("SIGINT");
 
 	// Delete the temporary dump file
-	fs.exists('./dump-01.csv', function(exists) {
+	console.log("Delete log");
+  fs.exists('./dump-01.csv', function(exists) {
 	  if(exists) {
 	    //Show in green
 	    console.log(gutil.colors.green('Log exists. Deleting now ...'));
 	    fs.unlink('./dump-01.csv');
-      // Final database process 
-      processAirodumpDB.update(function(){
-        // Signal shutdown completion
-        cb();
-      });
 	  } else {
 	    //Show in red
 	    console.log(gutil.colors.red('Log not found, so not deleting.'));
 	  }
+    console.log("Final database update");
+    // Final database process 
+    processAirodumpDB.update(monConn, function(){
+      // Signal shutdown completion
+      cb();
+    });
 	});
 };
