@@ -32,7 +32,7 @@ deviceSchema.statics.addEssid = function(deviceObject, essidArray, cb) {
         }
         // Cb when complete
         if (index == (array.length - 1)){
-            cb();
+            cb(deviceObject);
         }        
     });
 };
@@ -41,7 +41,7 @@ deviceSchema.statics.addEssid = function(deviceObject, essidArray, cb) {
 // No response, time slice object provided
 deviceSchema.statics.addTimeSlice = function(deviceObject, timeSliceID, cb) {
     deviceObject.timeSlices.push(timeSliceID);
-    cb();
+    cb(deviceObject);
 };
 
 // Add to affiliated networks list
@@ -56,6 +56,7 @@ deviceSchema.statics.checkForDevice = function(monConn, macAddress, cb) {
         }).toArray(function(err, value){
           cb(value);
           console.log("YESSSS:" + value);
+          console.log(macAddress);
           console.log(err); 
         });
     });

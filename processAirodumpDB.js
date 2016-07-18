@@ -9,6 +9,10 @@ exports.update = function(monConn, cb){
 	console.log("Airodump DB process starting");
   // Fetch for each airodump record
   console.log("Airodump DB record retrieved");
+  var deviceModels;
+  monConn.db.collection('devicemodels', function(err, deviceModelsRaw){
+    deviceModels = deviceModelsRaw;
+  });
   monConn.db.collection('airodumpRecord', function(err, dumpRecordCollection){
     var dumpRecordsCollected = dumpRecordCollection.find({});
     dumpRecordsCollected.forEach(function(dumpTimeSlice, index) {
@@ -16,8 +20,10 @@ exports.update = function(monConn, cb){
         function(callback) {
           // Check for device conflicts
           console.log("Checking device conflict");
-          deviceModel.checkForDevice(monConn, dumpTimeSlice.MacAddress, function(locatedDevice){
-            callback(null, dumpTimeSlice, locatedDevice);
+          deviceModel.checkForDevice(monConn, dumpTimeSlice.macAddress, function(locatedDevice){
+            console.log("Confawe: ");
+            console.log(locatedDevice);
+            callback(null, dumpTimeSlice, locatedDevice[0]);
           });
         },
         function(dumpTimeSlice, locatedDevice, callback) {
@@ -26,11 +32,21 @@ exports.update = function(monConn, cb){
             // Add time slice
             console.log(locatedDevice.macAddress);
             console.log(locatedDevice.timeSlices);
-            deviceModel.addTimeSlice(locatedDevice, dumpTimeSlice._id, function(){
-                console.log("Updated timeslice:" +  locatedDevice.timeSlices);
+            deviceModel.addTimeSlice(locatedDevice, dumpTimeSlice._id, function(locatedDevice){
+              console.log("Updated timeslice:" +  locatedDevice.timeSlices);
+              console.log("Err:" + err);
+              console.log("Yea" + deviceModels);
+              deviceModels.update({
+                "macAddress": dumpTimeSlice.macAddress
+              }, locatedDevice, true);
               // Add probed essids
-              deviceModel.addEssid(locatedDevice, dumpTimeSlice.ProbedEssids, function(){
+              deviceModel.addEssid(locatedDevice, dumpTimeSlice.probedEssids, function(locatedDevice){
                 console.log("Updated id:" +  locatedDevice.affiliatedNetworks);
+                locatedDevice.save((err) => {
+                  if (err) {
+                    console.log(err);
+                  } 
+                });  
                 cb();
               });
             });
