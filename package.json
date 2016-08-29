@@ -6,7 +6,9 @@
     "start": "node trackingLoggingCoordinator.js"
   },
   "dependencies": {
+    "async": "^2.0.1",
     "fs": "0.0.2",
+    "gulp-util": "^3.0.7",
     "https": "^1.0.0",
     "mongoose": "^4.5.4",
     "querystring": "^0.2.0",
