@@ -73,7 +73,7 @@ function handleRecord(dumpTimeSlice, locatedDevice, callback) {
   airodumpRecord.remove(dumpTimeSlice);
 }
 
-function saveNewDevice(dumpTimeSlice, dumpRecordsCollected, cb)
+function saveNewDevice(dumpTimeSlice, dumpRecordsCollected, cb){
   console.log("No device located");
   // Generate new device if it doesn't exist
   // Generate new time slice array
