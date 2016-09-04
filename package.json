@@ -1,5 +1,5 @@
 {
-  "name": "wifiTracker",
+  "name": "wifitracker",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -13,5 +13,18 @@
     "mongoose": "^4.5.4",
     "querystring": "^0.2.0",
     "underscore": "^1.8.3"
-  }
+  },
+  "description": "Tracks and logs wifi signals. Signal records are stored both per time slice, and per Mac Address in MongoDB. Designed to run on Kali Linux and use Airodump-ng to track signals.",
+  "main": "airodumpRecord.js",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ericzhao28/wifiTracker.git"
+  },
+  "author": "Eric Zhao",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ericzhao28/wifiTracker/issues"
+  },
+  "homepage": "https://github.com/ericzhao28/wifiTracker#readme"
 }
