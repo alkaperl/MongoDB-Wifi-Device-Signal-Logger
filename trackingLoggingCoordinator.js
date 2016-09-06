@@ -20,7 +20,7 @@ var processDBCounter = null;
 
 // Connect to the db
 console.log("Connecting to MongoDB");
-mongoose.connect("mongodb://localhost:27017/wifiLogs");
+mongoose.connect("mongodb://104.131.133.17:27017/wifiLogs");
 var monConn = mongoose.connection;
 monConn.on('error', () => {
   console.error('MongoDB Connection Error. Please make sure that MongoDB is running.');
