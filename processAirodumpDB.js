@@ -42,6 +42,9 @@ exports.update = function(monConn, cb){
       // Begin processing database
       // DB processing waterfall function for each airodumpRecord
       console.log("dump records:" + dumpRecordsCollected);
+      if (typeof dumpRecordsCollected ==='object'){
+        dumpRecordsCollected = [dumpRecordsCollected];
+      }
       async.forEachOfSeries(dumpRecordsCollected, function(dumpTimeSlice, index, seriesCB) {
         async.waterfall([
           function(waterfallCB) {
