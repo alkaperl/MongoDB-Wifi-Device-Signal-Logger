@@ -14,18 +14,28 @@ exports.update = function(monConn, cb){
     function(callback){
       var deviceModels;
       monConn.db.collection('devicemodels', function(err, deviceModelsRaw){
-        deviceModels = deviceModelsRaw;
-        console.log("Device model processing");
-        callback();
+        if (err){
+          console.log(err);
+          cb(err);
+        } else {
+          deviceModels = deviceModelsRaw;
+          console.log("Device model processing");
+          callback();
+        }
       });
     },
     function(callback){
       // Load the airodumpRecord models collection
       var dumpRecordCollection;
       monConn.db.collection('airodumpRecord', function(err, dumpRecordCollection){
-        var dumpRecordsCollected = dumpRecordCollection.find({});
-        console.log("Airodump update");
-        callback(null, dumpRecordsCollected)
+        if (err){
+          console.log(err);
+          cb(err);
+        } else {
+          var dumpRecordsCollected = dumpRecordCollection.find({});
+          console.log("Airodump update");
+          callback(null, dumpRecordsCollected);
+        }
       });  
     }, 
     function(dumpRecordsCollected, callback){
@@ -70,9 +80,8 @@ exports.update = function(monConn, cb){
           }
         ]); 
       }, callback);
-    },
-    cb
-  ])
+    }
+  ], cb);
 };
 
 // Counter for periodic db updates
