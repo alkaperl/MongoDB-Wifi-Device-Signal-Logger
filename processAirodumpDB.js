@@ -52,6 +52,10 @@ exports.update = function(monConn, cb){
             // Check for device conflicts
             console.log("Checking device conflict");
             deviceModel.checkForDevice(monConn, dumpTimeSlice.macAddress, function(locatedDevice){
+              if (!locatedDevice){
+                console.log("No located device")
+                locatedDevice = [];
+              }
               waterfallCB(null, locatedDevice[0]);
             });
           }, 
@@ -98,7 +102,7 @@ exports.counter = function(monConn, cb){
 };
 
 function saveNewDevice(dumpTimeSlice, dumpRecordsCollected, cb){
-  console.log("No device located");
+  console.log("New device located");
   // Generate new device if it doesn't exist
   // Generate new time slice array
   var newTimeSlices = [];
