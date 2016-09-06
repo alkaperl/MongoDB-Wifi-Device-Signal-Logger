@@ -24,8 +24,10 @@ A record for every Mac Address detected by the app. Contains:
 * Load into Kali
 * Follow the installation process below
 * Connect a wifi device
+* Make sure that node/npm/java 1.8 are installed
 * Confirm that the wifi device works, ex: 'airmon-ng start wlan0' 
 * Start this app: 'npm start'
+* Swap out the ip addresses for mongod access under './kaliProj/com/ericWifiScanner/ProcessAirodumpOutput.java' and './trackingLoggingCoordinator.js'
 
 ## Installation
 ```
