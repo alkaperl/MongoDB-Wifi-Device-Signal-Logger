@@ -31,7 +31,7 @@ exports.update = function(monConn, cb){
     function(dumpRecordsCollected, callback){
       // Begin processing database
       // DB processing waterfall function for each airodumpRecord
-      dumpRecordsCollected.forEach(function(dumpTimeSlice, index) {
+      async.forEachOfSeries(dumpRecordsCollected, function(dumpTimeSlice, index, seriesCB) {
         async.waterfall([
           function(waterfallCB) {
 
@@ -59,9 +59,9 @@ exports.update = function(monConn, cb){
               saveNewDevice(dumpTimeSlice, dumpRecordsCollected, function(err){
                 if (index === dumpRecordsCollected.length -1){
                   console.log("DB processing complete");
-                  callback();
+                  seriesCB();
                 } else {
-                  callback(err);
+                  seriesCB(err);
                 }
               })
             }
@@ -69,8 +69,9 @@ exports.update = function(monConn, cb){
             airodumpRecord.remove(dumpTimeSlice);
           }
         ]); 
-      });
-    }
+      }, callback);
+    },
+    cb
   ])
 };
 
