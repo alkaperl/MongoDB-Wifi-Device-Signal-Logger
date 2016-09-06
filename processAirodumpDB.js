@@ -10,30 +10,38 @@ var airodumpRecord = require('./airodumpRecord');
 exports.update = function(monConn, cb){
 	console.log("Airodump DB processing starting");
   // Load the device models collection
-  var deviceModels;
-  monConn.db.collection('devicemodels', function(err, deviceModelsRaw){
-    deviceModels = deviceModelsRaw;
-  });
-
-  // Load the airodumpRecord models collection
-  var dumpRecordCollection;
-  monConn.db.collection('airodumpRecord', function(err, dumpRecordCollection){
-    var dumpRecordsCollected = dumpRecordCollection.find({});
-  });
-
-  // Begin processing database
-  // DB processing waterfall function for each airodumpRecord
-  dumpRecordsCollected.forEach(function(dumpTimeSlice, index) {
-    async.waterfall([
-      function(callback) {
-        // Check for device conflicts
-        console.log("Checking device conflict");
-        deviceModel.checkForDevice(monConn, dumpTimeSlice.macAddress, function(locatedDevice){
-          callback(null, dumpTimeSlice, locatedDevice[0]);
-        });
-      }, handleRecord
-    ]); 
-  });
+  async.waterfall([
+    function(callback){
+      var deviceModels;
+      monConn.db.collection('devicemodels', function(err, deviceModelsRaw){
+        deviceModels = deviceModelsRaw;
+        callback();
+      });
+    },
+    function(callback){
+      // Load the airodumpRecord models collection
+      var dumpRecordCollection;
+      monConn.db.collection('airodumpRecord', function(err, dumpRecordCollection){
+        var dumpRecordsCollected = dumpRecordCollection.find({});
+        callback(null, dumpRecordsCollected)
+      });  
+    }, 
+    function(dumpRecordsCollected, callback){
+      // Begin processing database
+      // DB processing waterfall function for each airodumpRecord
+      dumpRecordsCollected.forEach(function(dumpTimeSlice, index) {
+        async.waterfall([
+          function(callback) {
+            // Check for device conflicts
+            console.log("Checking device conflict");
+            deviceModel.checkForDevice(monConn, dumpTimeSlice.macAddress, function(locatedDevice){
+              callback(null, dumpTimeSlice, locatedDevice[0]);
+            });
+          }, handleRecord
+        ]); 
+      });
+    }
+  ])
 };
 
 // Counter for periodic db updates
