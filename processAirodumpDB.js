@@ -41,6 +41,7 @@ exports.update = function(monConn, cb){
     function(dumpRecordsCollected, callback){
       // Begin processing database
       // DB processing waterfall function for each airodumpRecord
+      console.log("dump records:" + dumpRecordsCollected);
       async.forEachOfSeries(dumpRecordsCollected, function(dumpTimeSlice, index, seriesCB) {
         async.waterfall([
           function(waterfallCB) {
@@ -48,10 +49,10 @@ exports.update = function(monConn, cb){
             // Check for device conflicts
             console.log("Checking device conflict");
             deviceModel.checkForDevice(monConn, dumpTimeSlice.macAddress, function(locatedDevice){
-              waterfallCB(null, dumpTimeSlice, locatedDevice[0]);
+              waterfallCB(null, locatedDevice[0]);
             });
           }, 
-          function (dumpTimeSlice, locatedDevice, waterfallCB) {
+          function (locatedDevice, waterfallCB) {
             // Create or update device
             if (locatedDevice){
               // If there is an exiting device, add airodumpRecord to it
