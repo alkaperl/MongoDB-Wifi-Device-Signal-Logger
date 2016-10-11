@@ -1,4 +1,4 @@
-# Wifi Signal Logger
+# Wifi Signal Logger (From 2016)
 Tracks and logs wifi signals. Signal records are stored both per time slice, and per Mac Address in MongoDB. Designed to run on Kali Linux and use Airodump-ng to track signals. 
 
 [![Maintenance Intended](http://maintained.tech/badge.svg)](http://maintained.tech/)
